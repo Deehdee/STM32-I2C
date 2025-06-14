@@ -1,17 +1,6 @@
-00:29:53 **** Incremental Build of configuration Debug for project I2C ****
-make -j12 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-arm-none-eabi-gcc -o "I2C.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Dawas\Documents\Projects\STM32\STM32-I2C\I2C\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="I2C.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: I2C.elf
- 
-arm-none-eabi-size  I2C.elf 
-arm-none-eabi-objdump -h -S I2C.elf  > "I2C.list"
-   text	   data	    bss	    dec	    hex	filename
-   9516	     12	   1724	  11252	   2bf4	I2C.elf
-Finished building: default.size.stdout
- 
-Finished building: I2C.list
- 
+10:26:22 **** Building Selected Files of configuration Debug for project I2C ****
+Info: Internal Builder is used for build
+arm-none-eabi-gcc "..\\Core\\Src\\main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core\\Src\\main.o" 
 
-00:29:53 Build Finished. 0 errors, 0 warnings. (took 648ms)
+10:26:22 Build Finished. 0 errors, 0 warnings. (took 357ms)
 
