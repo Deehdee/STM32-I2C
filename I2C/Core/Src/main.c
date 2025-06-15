@@ -108,6 +108,7 @@ int main(void)
 	  HAL_Delay(500);
 	  //Here i am from linux
 	  //Here i am from github
+	  //Here i am from the terminal
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
