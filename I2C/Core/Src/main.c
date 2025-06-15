@@ -99,13 +99,23 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  uint32_t now = 0, last_blink = 0;
+
   while (1)
   {
     /* USER CODE END WHILE */
-	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  HAL_Delay(1000);
-	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  HAL_Delay(500);
+	  now = HAL_GetTick();
+
+	  if (now - last_blink >= 500)
+	  {
+		  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+		  last_blink = now;
+	  }
+
+
+
+
 	  //Here i am from linux
 	  //Here i am from github
 	  //Here i am from the terminal
