@@ -112,13 +112,10 @@ int main(void)
 		  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 		  last_blink = now;
 	  }
-
-
-
-
 	  //Here i am from linux
 	  //Here i am from github
 	  //Here i am from the terminal
+    //Here i am from windows
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
