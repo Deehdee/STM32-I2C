@@ -101,24 +101,45 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  uint32_t now = 0, last_blink = 0;
 
   while (1)
   {
     /* USER CODE END WHILE */
-	  now = HAL_GetTick();
-	  printf("Time now: %f", now);
-	  if (now - last_blink >= 500)
+
+	  // Check for I2C connection
+	  uint8_t whoami = 0; //stored value for i2c address
+
+	  if (HAL_I2C_Mem_Read(&hi2c1,
+	                   0x68 << 1,
+	                   0x75,
+	                   I2C_MEMADD_SIZE_8BIT,
+	                   &whoami,
+	                   1,
+	                   1000) == HAL_OK)
 	  {
-		  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-		  last_blink = now;
-		  printf("Last blink: %d", last_blink);
+		  if (whoami == 0x68)
+		  {
+			  // MPU6050 is connected and responding
+		  }
+		  else{
+			  while(1); //stop execution
+			  // I2C succeeded, but unexpected device ID
+		  }
+	  } else {
+		  while(1); //stop execution
+		  //I2C failed completely, check connection
 	  }
-	  //Here i am from linux
-	  //Here i am from github
-	  //Here i am from the terminal
-	  //Here i am from vsc windows
-	  //Here i am from cube ide windows
+
+	  HAL_I2C_Master_Receive(&hi2c1, DevAddress, pData, Size, Timeout)
+	  	  // Master sends or receives bytes of data
+	  	  // Master sends a stop condition
+
+	  // Send received data to host PC via UART/USB (for file logging)
+
+	  // Print sensor data (e.g., accel, gyro) to serial terminal
+
+	  //Add delay to control data acquisition rate
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
