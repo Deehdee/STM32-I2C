@@ -101,46 +101,57 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+  uint8_t whoami = 0;
+  unint8_t raw[14];
+  uint16_t gyro_x_h, gyro_x_l, gyro_y_h, gyro_y_l, gyro_z_h, gyro_z_l,
+  	  	   accel_x_h, accel_x_l, accel_y_h, accel_y_l, accel_z_h, accel_z_l;
 
   while (1)
   {
-    /* USER CODE END WHILE */
+	  // Initialize and test I2C connection
 
-	  // Check for I2C connection
-	  uint8_t whoami = 0; //stored value for i2c address
+	  HAL_I2C_Mem_Read(&hi2c1, 0x68, 0x75 << 1, 7, whoami, 1, 1000);
 
-	  if (HAL_I2C_Mem_Read(&hi2c1,
-	                   0x68 << 1,
-	                   0x75,
-	                   I2C_MEMADD_SIZE_8BIT,
-	                   &whoami,
-	                   1,
-	                   1000) == HAL_OK)
-	  {
-		  if (whoami == 0x68)
-		  {
-			  // MPU6050 is connected and responding
-		  }
-		  else{
-			  while(1); //stop execution
-			  // I2C succeeded, but unexpected device ID
-		  }
-	  } else {
-		  while(1); //stop execution
-		  //I2C failed completely, check connection
+	  // Gather I2C data from slave
+	  for (uint8_t reg = 0x3B; reg <=0x48; reg++){
+		  HAL_I2C_Mem_Read(&hi2c1,
+				  0x68 << 1, 			// 8-bit address
+				  reg, 					//current register address
+				  I2C_MEM_ADD_SIZE_8BIT,
+				  &raw[reg-0x3B], 		//offset: first byte goes into raw[0];
+				  1, 					//read 1 byte
+				  1000); 				//timeout
 	  }
+	  int16_t accel_x = (int16_t)(raw[0] << 8 | raw[1]);
+	  int16_t accel_y = (int16_t)(raw[2] << 8 | raw[3]);
+	  int16_t accel_z = (int16_t)(raw[4] << 8 | raw[5]);
 
-	  uint8_t rawData[14];
-	 HAL_I2C_Mem_Read(&hi2c1, 0x68 << 1, )
-	  HAL_I2C_Mem_Read(&hi2c1, 0x68 << 1, pData, 2, 1000);
-	  	  // Master sends or receives bytes of data
-	  	  // Master sends a stop condition
+	  int16_t temp_raw = (int16_t)(raw[6] << 8 | raw[7]);
 
-	  // Send received data to host PC via UART/USB (for file logging)
+	  int16_t gyro_x = (int16_t)(raw[8] << 8 | raw[9]);
+	  int16_t gyro_y = (int16_t)(raw[10] << 8 | raw[11]);
+	  int16_t gyro_z = (int16_t)(raw[12] << 8 | raw[13]);
 
-	  // Print sensor data (e.g., accel, gyro) to serial terminal
+	  float accel_x_ms2 = (accel_x / 16384.0f) * 9.81f;
+	  float accel_y_ms2 = (accel_y / 16384.0f) * 9.81f;
+	  float accel_z_ms2 = (accel_z / 16384.0f) * 9.81f;
 
-	  //Add delay to control data acquisition rate
+	  float temp_C = (temp_raw / 340.0f) + 36.53f;
+
+	  float gyro_x_dps = gyro_x / 131.0f;
+	  float gyro_y_dps = gyro_y / 131.0f;
+	  float gyro_z_dps = gyro_z / 131.0f;
+
+
+
+	  //Send input data to serial terminal via UART
+	  char msg[64];
+	  sprintf(msg, "Accel X: %2f m/s^2\r\n", accel_x_ms2);
+
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
+
+
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
