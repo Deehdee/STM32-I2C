@@ -130,7 +130,9 @@ int main(void)
 		  //I2C failed completely, check connection
 	  }
 
-	  HAL_I2C_Master_Receive(&hi2c1, DevAddress, pData, Size, Timeout)
+	  uint8_t rawData[14];
+	 HAL_I2C_Mem_Read(&hi2c1, 0x68 << 1, )
+	  HAL_I2C_Mem_Read(&hi2c1, 0x68 << 1, pData, 2, 1000);
 	  	  // Master sends or receives bytes of data
 	  	  // Master sends a stop condition
 
