@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -106,11 +107,12 @@ int main(void)
   {
     /* USER CODE END WHILE */
 	  now = HAL_GetTick();
-
+	  printf("Time now: %f", now);
 	  if (now - last_blink >= 500)
 	  {
 		  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 		  last_blink = now;
+		  printf("Last blink: %d", last_blink);
 	  }
 	  //Here i am from linux
 	  //Here i am from github
