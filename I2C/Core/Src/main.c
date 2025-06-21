@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -147,7 +148,6 @@ int main(void)
 	  int16_t gyro_z = (int16_t)(raw[12] << 8 | raw[13]);
 
 	  // Convert raw units into physical units
-
 	  float accel_x_ms2 = (accel_x / 16384.0f) * 9.81f;
 	  float accel_y_ms2 = (accel_y / 16384.0f) * 9.81f;
 	  float accel_z_ms2 = (accel_z / 16384.0f) * 9.81f;
@@ -164,7 +164,7 @@ int main(void)
 	  char msg[64];
 	  sprintf(msg, "Accel X: %2f m/s^2\r\n", accel_x_ms2);
 
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg, strln(msg), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
 
 
     /* USER CODE END WHILE */
