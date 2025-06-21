@@ -102,7 +102,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
   uint8_t whoami = 0;
-  unint8_t raw[14];
+  uint8_t raw[14];
   uint16_t gyro_x_h, gyro_x_l, gyro_y_h, gyro_y_l, gyro_z_h, gyro_z_l,
   	  	   accel_x_h, accel_x_l, accel_y_h, accel_y_l, accel_z_h, accel_z_l;
 
@@ -117,11 +117,25 @@ int main(void)
 		  HAL_I2C_Mem_Read(&hi2c1,
 				  0x68 << 1, 			// 8-bit address
 				  reg, 					//current register address
-				  I2C_MEM_ADD_SIZE_8BIT,
+				  I2C_MEMADD_SIZE_8BIT,
 				  &raw[reg-0x3B], 		//offset: first byte goes into raw[0];
 				  1, 					//read 1 byte
 				  1000); 				//timeout
 	  }
+
+
+	 // Gather all 14 bytes of data into one call
+	  uint8_t raw[14]; // buffer for all data
+
+	  HAL_I2C_Mem_Read(&hi2c1,
+			  	  	   0x68 << 1,
+					   0x3B,
+					   I2C_MEMADD_SIZE_8BIT,
+					   raw,
+					   14,
+					   1000);
+
+	  // Combine the high and low bytes of data into a single 2 byte / 16-bit data structure
 	  int16_t accel_x = (int16_t)(raw[0] << 8 | raw[1]);
 	  int16_t accel_y = (int16_t)(raw[2] << 8 | raw[3]);
 	  int16_t accel_z = (int16_t)(raw[4] << 8 | raw[5]);
@@ -131,6 +145,8 @@ int main(void)
 	  int16_t gyro_x = (int16_t)(raw[8] << 8 | raw[9]);
 	  int16_t gyro_y = (int16_t)(raw[10] << 8 | raw[11]);
 	  int16_t gyro_z = (int16_t)(raw[12] << 8 | raw[13]);
+
+	  // Convert raw units into physical units
 
 	  float accel_x_ms2 = (accel_x / 16384.0f) * 9.81f;
 	  float accel_y_ms2 = (accel_y / 16384.0f) * 9.81f;
@@ -148,7 +164,7 @@ int main(void)
 	  char msg[64];
 	  sprintf(msg, "Accel X: %2f m/s^2\r\n", accel_x_ms2);
 
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg, strln(msg), 1000);
 
 
     /* USER CODE END WHILE */
