@@ -88,28 +88,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  uint8_t raw[14]; // buffer for all data
-  uint8_t whoami = 0; // Buffer for whoami register to write back to
-  uint8_t wake = 0x00;
-  HAL_I2C_Mem_Write(&hi2c1, 0x68 << 1, 0x6B, I2C_MEMADD_SIZE_8BIT, &wake, 1, 1000);
 
-  // Initialize and test I2C connection
-
-  HAL_I2C_Mem_Read(&hi2c1,
-		  	  	   0x68,
-				   0x75 << 1,
-				   I2C_MEMADD_SIZE_8BIT,
-				   &whoami,
-				   1,
-				   1000);
-
-  if (whoami != 0x68) {
-      // Optional: blink LED or send error over UART
-	  char error[64];
-	  sprintf(error, "Error, no I2C device detected");
-      Error_Handler();
-      HAL_UART_Transmit(&huart2, (uint8_t*)error, strlen(error), 1000);
-  }
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -117,7 +96,29 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+  	uint8_t raw[14]; // buffer for all data
+    uint8_t whoami = 0; // Buffer for whoami register to write back to
+    uint8_t wake = 0x00;
+    HAL_I2C_Mem_Write(&hi2c1, 0x68 << 1, 0x6B, I2C_MEMADD_SIZE_8BIT, &wake, 1, 1000);
 
+    // Initialize and test I2C connection
+
+    HAL_I2C_Mem_Read(&hi2c1,
+  		  	  	   0x68 << 1,
+  				   0x75,
+  				   I2C_MEMADD_SIZE_8BIT,
+  				   &whoami,
+  				   1,
+  				   1000);
+
+    if (whoami != 0x68) {
+        // Optional: blink LED or send error over UART
+  	  char error[64];
+  	  sprintf(error, "Error, no I2C device detected");
+        HAL_UART_Transmit(&huart2, (uint8_t*)error, strlen(error), 1000);
+        HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+        while(1);
+    }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -141,8 +142,6 @@ int main(void)
 	  }
 
 	 // Gather all 14 bytes of data into one call
-
-
 	  HAL_I2C_Mem_Read(&hi2c1,
 			  	  	   0x68 << 1,
 					   0x3B,
@@ -198,6 +197,8 @@ int main(void)
 	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_gyro_x, strlen(msg_gyro_x), 1000);
 	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_gyro_y, strlen(msg_gyro_y), 1000);
 	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_gyro_z, strlen(msg_gyro_z), 1000);
+
+	  HAL_Delay(1000);
 
     /* USER CODE END WHILE */
 

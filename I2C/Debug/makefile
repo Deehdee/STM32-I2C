@@ -60,8 +60,8 @@ all: main-build
 main-build: I2C.elf secondary-outputs
 
 # Tool invocations
-I2C.elf I2C.map: $(OBJS) $(USER_OBJS) /home/dallas/Documents/Projects/STM32/I2C/STM32-I2C/I2C/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "I2C.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/dallas/Documents/Projects/STM32/I2C/STM32-I2C/I2C/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="I2C.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+I2C.elf I2C.map: $(OBJS) $(USER_OBJS) C:\Users\Dawas\Documents\Projects\STM32\STM32-I2C\I2C\STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "I2C.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Dawas\Documents\Projects\STM32\STM32-I2C\I2C\STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="I2C.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
