@@ -114,7 +114,7 @@ int main(void)
     if (whoami != 0x68) {
         // Optional: blink LED or send error over UART
   	  char error[64];
-  	  sprintf(error, "Error, no I2C device detected");
+  	  sprintf(error, "Error, no I2C device detected\r\n");
         HAL_UART_Transmit(&huart2, (uint8_t*)error, strlen(error), 1000);
         HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
         while(1);
@@ -179,14 +179,16 @@ int main(void)
 	  char msg_gyro_y[64];
 	  char msg_gyro_z[64];
 
-	  //Serial printing
-	  sprintf(msg_accel_x, "Raw: %d, Accel X: %.5f m/s^2\r\n", accel_x, accel_x_ms2);
-	  sprintf(msg_accel_y, "Raw: %d, Accel Y: %.5f m/s^2\r\n", accel_y, accel_y_ms2);
-	  sprintf(msg_accel_z, "Raw: %d, Accel Z: %.5f m/s^2\r\n", accel_z, accel_z_ms2);
-	  sprintf(msg_temp, "Raw %d, Temp: %.2f C\r\n", temp_raw, temp_C);
-	  sprintf(msg_gyro_x, "Raw: %d, Gyro X: %.5f dps\r\n", gyro_x, gyro_x_dps);
-	  sprintf(msg_gyro_y, "Raw: %d, Gyro Y: %.5f dps\r\n", gyro_y, gyro_y_dps);
-	  sprintf(msg_gyro_z, "Raw: %d, Gyro Z: %.5f dps\r\n", gyro_z, gyro_z_dps);
+	  // Serial Printing in CSV format
+
+	  sprintf(msg_accel_x, "%.2f, ", accel_x_ms2);
+	  sprintf(msg_accel_y, "%.2f, ", accel_y_ms2);
+	  sprintf(msg_accel_z, "%.2f, ", accel_z_ms2);
+	  sprintf(msg_temp, "%.2f, ", temp_C);
+	  sprintf(msg_gyro_x, "%.2f, ", gyro_x_dps);
+	  sprintf(msg_gyro_y, "%.2f, ", gyro_y_dps);
+	  sprintf(msg_gyro_z, "%.2f\r\n ", gyro_z_dps);
+
 
 
 	  //Serial Transmission
