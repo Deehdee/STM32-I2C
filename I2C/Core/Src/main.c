@@ -88,7 +88,28 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  uint8_t raw[14]; // buffer for all data
+  uint8_t whoami = 0; // Buffer for whoami register to write back to
+  uint8_t wake = 0x00;
+  HAL_I2C_Mem_Write(&hi2c1, 0x68 << 1, 0x6B, I2C_MEMADD_SIZE_8BIT, &wake, 1, 1000);
 
+  // Initialize and test I2C connection
+
+  HAL_I2C_Mem_Read(&hi2c1,
+		  	  	   0x68,
+				   0x75 << 1,
+				   I2C_MEMADD_SIZE_8BIT,
+				   &whoami,
+				   1,
+				   1000);
+
+  if (whoami != 0x68) {
+      // Optional: blink LED or send error over UART
+	  char error[64];
+	  sprintf(error, "Error, no I2C device detected");
+      Error_Handler();
+      HAL_UART_Transmit(&huart2, (uint8_t*)error, strlen(error), 1000);
+  }
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -102,31 +123,25 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  uint8_t whoami = 0;
-  uint8_t raw[14];
-  uint16_t gyro_x_h, gyro_x_l, gyro_y_h, gyro_y_l, gyro_z_h, gyro_z_l,
-  	  	   accel_x_h, accel_x_l, accel_y_h, accel_y_l, accel_z_h, accel_z_l;
+
 
   while (1)
   {
-	  // Initialize and test I2C connection
 
-	  HAL_I2C_Mem_Read(&hi2c1, 0x68, 0x75 << 1, 7, whoami, 1, 1000);
 
 	  // Gather I2C data from slave
 	  for (uint8_t reg = 0x3B; reg <=0x48; reg++){
 		  HAL_I2C_Mem_Read(&hi2c1,
-				  0x68 << 1, 			// 8-bit address
-				  reg, 					//current register address
-				  I2C_MEMADD_SIZE_8BIT,
-				  &raw[reg-0x3B], 		//offset: first byte goes into raw[0];
-				  1, 					//read 1 byte
-				  1000); 				//timeout
+				  	  	   0x68 << 1, 			// 8-bit address
+						   reg, 					//current register address
+						   I2C_MEMADD_SIZE_8BIT,
+						   &raw[reg-0x3B], 		//offset: first byte goes into raw[0];
+						   1, 					//read 1 byte
+						   1000); 				//timeout
 	  }
 
-
 	 // Gather all 14 bytes of data into one call
-	  uint8_t raw[14]; // buffer for all data
+
 
 	  HAL_I2C_Mem_Read(&hi2c1,
 			  	  	   0x68 << 1,
@@ -140,9 +155,7 @@ int main(void)
 	  int16_t accel_x = (int16_t)(raw[0] << 8 | raw[1]);
 	  int16_t accel_y = (int16_t)(raw[2] << 8 | raw[3]);
 	  int16_t accel_z = (int16_t)(raw[4] << 8 | raw[5]);
-
 	  int16_t temp_raw = (int16_t)(raw[6] << 8 | raw[7]);
-
 	  int16_t gyro_x = (int16_t)(raw[8] << 8 | raw[9]);
 	  int16_t gyro_y = (int16_t)(raw[10] << 8 | raw[11]);
 	  int16_t gyro_z = (int16_t)(raw[12] << 8 | raw[13]);
@@ -151,9 +164,7 @@ int main(void)
 	  float accel_x_ms2 = (accel_x / 16384.0f) * 9.81f;
 	  float accel_y_ms2 = (accel_y / 16384.0f) * 9.81f;
 	  float accel_z_ms2 = (accel_z / 16384.0f) * 9.81f;
-
 	  float temp_C = (temp_raw / 340.0f) + 36.53f;
-
 	  float gyro_x_dps = gyro_x / 131.0f;
 	  float gyro_y_dps = gyro_y / 131.0f;
 	  float gyro_z_dps = gyro_z / 131.0f;
@@ -161,11 +172,32 @@ int main(void)
 
 
 	  //Send input data to serial terminal via UART
-	  char msg[64];
-	  sprintf(msg, "Accel X: %2f m/s^2\r\n", accel_x_ms2);
+	  char msg_accel_x[64];
+	  char msg_accel_y[64];
+	  char msg_accel_z[64];
+	  char msg_temp[64];
+	  char msg_gyro_x[64];
+	  char msg_gyro_y[64];
+	  char msg_gyro_z[64];
 
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), 1000);
+	  //Serial printing
+	  sprintf(msg_accel_x, "Raw: %d, Accel X: %.5f m/s^2\r\n", accel_x, accel_x_ms2);
+	  sprintf(msg_accel_y, "Raw: %d, Accel Y: %.5f m/s^2\r\n", accel_y, accel_y_ms2);
+	  sprintf(msg_accel_z, "Raw: %d, Accel Z: %.5f m/s^2\r\n", accel_z, accel_z_ms2);
+	  sprintf(msg_temp, "Raw %d, Temp: %.2f C\r\n", temp_raw, temp_C);
+	  sprintf(msg_gyro_x, "Raw: %d, Gyro X: %.5f dps\r\n", gyro_x, gyro_x_dps);
+	  sprintf(msg_gyro_y, "Raw: %d, Gyro Y: %.5f dps\r\n", gyro_y, gyro_y_dps);
+	  sprintf(msg_gyro_z, "Raw: %d, Gyro Z: %.5f dps\r\n", gyro_z, gyro_z_dps);
 
+
+	  //Serial Transmission
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_accel_x, strlen(msg_accel_x), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_accel_y, strlen(msg_accel_y), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_accel_z, strlen(msg_accel_z), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_temp, strlen(msg_temp), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_gyro_x, strlen(msg_gyro_x), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_gyro_y, strlen(msg_gyro_y), 1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_gyro_z, strlen(msg_gyro_z), 1000);
 
     /* USER CODE END WHILE */
 
