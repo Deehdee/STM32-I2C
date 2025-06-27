@@ -99,6 +99,7 @@ int main(void)
   	uint8_t raw[14]; // buffer for all data
     uint8_t whoami = 0; // Buffer for whoami register to write back to
     uint8_t wake = 0x00;
+    char msg_full[256];
     HAL_I2C_Mem_Write(&hi2c1, 0x68 << 1, 0x6B, I2C_MEMADD_SIZE_8BIT, &wake, 1, 1000);
 
     // Initialize and test I2C connection
@@ -129,18 +130,6 @@ int main(void)
   while (1)
   {
 
-
-	  // Gather I2C data from slave
-	  for (uint8_t reg = 0x3B; reg <=0x48; reg++){
-		  HAL_I2C_Mem_Read(&hi2c1,
-				  	  	   0x68 << 1, 			// 8-bit address
-						   reg, 					//current register address
-						   I2C_MEMADD_SIZE_8BIT,
-						   &raw[reg-0x3B], 		//offset: first byte goes into raw[0];
-						   1, 					//read 1 byte
-						   1000); 				//timeout
-	  }
-
 	 // Gather all 14 bytes of data into one call
 	  HAL_I2C_Mem_Read(&hi2c1,
 			  	  	   0x68 << 1,
@@ -160,47 +149,20 @@ int main(void)
 	  int16_t gyro_z = (int16_t)(raw[12] << 8 | raw[13]);
 
 	  // Convert raw units into physical units
-	  float accel_x_ms2 = (accel_x / 16384.0f) * 9.81f;
-	  float accel_y_ms2 = (accel_y / 16384.0f) * 9.81f;
-	  float accel_z_ms2 = (accel_z / 16384.0f) * 9.81f;
-	  float temp_C = (temp_raw / 340.0f) + 36.53f;
-	  float gyro_x_dps = gyro_x / 131.0f;
-	  float gyro_y_dps = gyro_y / 131.0f;
-	  float gyro_z_dps = gyro_z / 131.0f;
-
-
-
-	  //Send input data to serial terminal via UART
-	  char msg_accel_x[64];
-	  char msg_accel_y[64];
-	  char msg_accel_z[64];
-	  char msg_temp[64];
-	  char msg_gyro_x[64];
-	  char msg_gyro_y[64];
-	  char msg_gyro_z[64];
+	  double accel_x_ms2 = (accel_x / 16384.0) * 9.81;
+	  double accel_y_ms2 = (accel_y / 16384.0) * 9.81;
+	  double accel_z_ms2 = (accel_z / 16384.0) * 9.81;
+	  double temp_C = (temp_raw / 340.0) + 36.53;
+	  double gyro_x_dps = gyro_x / 131.0;
+	  double gyro_y_dps = gyro_y / 131.0;
+	  double gyro_z_dps = gyro_z / 131.0;
 
 	  // Serial Printing in CSV format
-
-	  sprintf(msg_accel_x, "%.2f, ", accel_x_ms2);
-	  sprintf(msg_accel_y, "%.2f, ", accel_y_ms2);
-	  sprintf(msg_accel_z, "%.2f, ", accel_z_ms2);
-	  sprintf(msg_temp, "%.2f, ", temp_C);
-	  sprintf(msg_gyro_x, "%.2f, ", gyro_x_dps);
-	  sprintf(msg_gyro_y, "%.2f, ", gyro_y_dps);
-	  sprintf(msg_gyro_z, "%.2f\r\n ", gyro_z_dps);
-
-
+	  sprintf(msg_full, "%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\r\n", accel_x_ms2, accel_y_ms2, accel_z_ms2, temp_C, gyro_x_dps, gyro_y_dps, gyro_z_dps);
 
 	  //Serial Transmission
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_accel_x, strlen(msg_accel_x), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_accel_y, strlen(msg_accel_y), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_accel_z, strlen(msg_accel_z), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_temp, strlen(msg_temp), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_gyro_x, strlen(msg_gyro_x), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_gyro_y, strlen(msg_gyro_y), 1000);
-	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_gyro_z, strlen(msg_gyro_z), 1000);
-
-	  HAL_Delay(1000);
+	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_full, strlen(msg_full), 1000);
+	  HAL_Delay(10);
 
     /* USER CODE END WHILE */
 
