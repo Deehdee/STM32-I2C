@@ -33,7 +33,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define accel_range 16384.0f
+#define gyro_range 131.0f
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -140,6 +141,8 @@ int main(void)
 					   1000);
 
 	  // Combine the high and low bytes of data into a single 2 byte / 16-bit data structure
+	  /* The raw[x] << 8 | raw[y] allows the two 8 bit signals be configured into a single 16 bit value
+	   	 although the fist value must be shifted to the left 8 bits to make room for the 2nd portion of 8 bits */
 	  int16_t accel_x = (int16_t)(raw[0] << 8 | raw[1]);
 	  int16_t accel_y = (int16_t)(raw[2] << 8 | raw[3]);
 	  int16_t accel_z = (int16_t)(raw[4] << 8 | raw[5]);
@@ -149,13 +152,13 @@ int main(void)
 	  int16_t gyro_z = (int16_t)(raw[12] << 8 | raw[13]);
 
 	  // Convert raw units into physical units
-	  double accel_x_ms2 = (accel_x / 16384.0) * 9.81;
-	  double accel_y_ms2 = (accel_y / 16384.0) * 9.81;
-	  double accel_z_ms2 = (accel_z / 16384.0) * 9.81;
-	  double temp_C = (temp_raw / 340.0) + 36.53;
-	  double gyro_x_dps = gyro_x / 131.0;
-	  double gyro_y_dps = gyro_y / 131.0;
-	  double gyro_z_dps = gyro_z / 131.0;
+	  double accel_x_ms2 = ((accel_x / accel_range) * 9.81)-0.535f;
+	  double accel_y_ms2 = ((accel_y / accel_range) * 9.81)+0.20f;
+	  double accel_z_ms2 = ((accel_z / accel_range) * 9.81)+1.4f;
+	  double temp_C = (temp_raw / 340.0) + 36.53f;
+	  double gyro_x_dps = (gyro_x / gyro_range)+2.75f;
+	  double gyro_y_dps = (gyro_y / gyro_range)+2.45f;
+	  double gyro_z_dps = (gyro_z / gyro_range)+0.33f;
 
 	  // Serial Printing in CSV format
 	  sprintf(msg_full, "%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\r\n", accel_x_ms2, accel_y_ms2, accel_z_ms2, temp_C, gyro_x_dps, gyro_y_dps, gyro_z_dps);
