@@ -8,4 +8,6 @@ Must have:
    4. Store received I2C data to a unique file (must not overwrite previous files)
 
 Outcome:
-* The STM32F446RE was able to communicate effectively with the MPU6050 through I2C. Through UART, I'm able to display the accelerometer and gyroscope values. Using Putty, I'm able to log the incoming UART data to a csv file for readability and graphing. 
+* The STM32F446RE was able to communicate effectively with the MPU6050 through I2C
+* Through UART, I'm able to display the accelerometer and gyroscope values
+* Using Putty, I'm able to log the incoming UART data to a csv file for readability and graphing. 
