@@ -128,9 +128,9 @@ int main(void)
 
 
 
-  while (1)
+  //while (1)
   {
-
+for (int i = 0; i < 100; i ++){
 	 // Gather all 14 bytes of data into one call
 	  HAL_I2C_Mem_Read(&hi2c1,
 			  	  	   0x68 << 1,
@@ -152,20 +152,21 @@ int main(void)
 	  int16_t gyro_z = (int16_t)(raw[12] << 8 | raw[13]);
 
 	  // Convert raw units into physical units
-	  double accel_x_ms2 = ((accel_x / accel_range) * 9.81)-0.535f;
-	  double accel_y_ms2 = ((accel_y / accel_range) * 9.81)+0.20f;
-	  double accel_z_ms2 = ((accel_z / accel_range) * 9.81)+1.4f;
+	  double accel_x_ms2 = ((accel_x / accel_range) * 9.81)-0.6675;
+	  double accel_y_ms2 = ((accel_y / accel_range) * 9.81)+0.098;
+	  double accel_z_ms2 = ((accel_z / accel_range) * 9.81)+1.38;
 	  double temp_C = (temp_raw / 340.0) + 36.53f;
-	  double gyro_x_dps = (gyro_x / gyro_range)+2.75f;
-	  double gyro_y_dps = (gyro_y / gyro_range)+2.45f;
-	  double gyro_z_dps = (gyro_z / gyro_range)+0.33f;
+	  double gyro_x_dps = (gyro_x / gyro_range)+2.7318;
+	  double gyro_y_dps = (gyro_y / gyro_range)+2.3349;
+	  double gyro_z_dps = (gyro_z / gyro_range)+0.2811;
 
 	  // Serial Printing in CSV format
 	  sprintf(msg_full, "%.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f\r\n", accel_x_ms2, accel_y_ms2, accel_z_ms2, temp_C, gyro_x_dps, gyro_y_dps, gyro_z_dps);
 
 	  //Serial Transmission
 	  HAL_UART_Transmit(&huart2, (uint8_t*)msg_full, strlen(msg_full), 1000);
-	  HAL_Delay(10);
+	  HAL_Delay(200);
+}
 
     /* USER CODE END WHILE */
 

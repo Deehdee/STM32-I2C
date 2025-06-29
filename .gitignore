@@ -55,3 +55,6 @@ dkms.conf
 
 # Virtual Environment
 python/venv/
+
+#putty files
+I2C/output/
