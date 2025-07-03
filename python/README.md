@@ -10,10 +10,10 @@ This folder contains Python scripts related to the project.
 python3 -m venv venv
 
 2. Activate on the linux environment:
-* On Linux/macOS:
+* On Linux/macOS/MINGW64:
 ```bash
 source venv/bin/activate
-* On Windows:
+* On Windows CMD:
 ```bash
 venv\Scripts\activate
 

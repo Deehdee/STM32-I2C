@@ -51,10 +51,15 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-.metadata
+# Eclipse/STM32CubeIDE metadata (optional, remove if you want to keep workspace config)
+.metadata/
 
-# Virtual Environment
-python/venv/
+# STM32CubeIDE build output folders
+Debug/
+Release/
 
-#putty files
+# Putty files folder you mentioned
 I2C/output/
+
+# Python virtual environment
+python/venv/
