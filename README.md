@@ -18,5 +18,5 @@ This repo is designed to hold the entire package - STM32 src code, python script
 # TODO
    * Research python packages required for project
    * Apply a filter to the I2C signal for a smoother application
-   * Apply a "current angle" relative to a horizontal using the given acceleration values
+   * Apply a "current angle" relative to a horizontal using the given acceleration values (i have a previous project that had formulas for the given values)
    *
